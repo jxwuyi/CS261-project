@@ -1,0 +1,10 @@
+OBJDIRS += deeplearning
+NN_SRC  := test.cc
+
+DL_OBS := $(patsubst %.cc,$(OBJDIR)/deeplearning/%.o,$(NN_SRC))
+
+all:    $(OBJDIR)/deeplearning/test
+
+$(OBJDIR)/deeplearning/test: $(OBJDIR)/deeplearning/test.o $(OBJDIR)/libcipher.so $(OBJDIR)/libmath.so
+	$(CXX) $< -o $@ $(LDFLAGS) -lmath -lutil -lcipher \
+	   -L$(NTLLIBPATH) -L$(NTLLIBPATH) -lntl

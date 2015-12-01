@@ -7,12 +7,12 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  ciphermed is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with ciphermed.  If not, see <http://www.gnu.org/licenses/>. 2
  *
@@ -55,7 +55,7 @@ class Paillier {
     const uint nbits;
     const mpz_class n2;
     bool good_generator;
-    
+
     /* Pre-computed randomness */
     std::list<mpz_class> rqueue;
 };
@@ -65,7 +65,7 @@ class Paillier_priv : public Paillier {
     Paillier_priv(const std::vector<mpz_class> &sk, gmp_randstate_t state);
     std::vector<mpz_class> privkey() const { return { p, q, g, a }; }
     void find_crt_factors();
-    
+
     // if a !=0, and if you are encrypting using the private key, use this function
     // 75% speedup
     mpz_class encrypt(const mpz_class &plaintext);
@@ -96,7 +96,7 @@ public:
     void precompute_powers();
     mpz_class compute_g_star_power(const mpz_class &x);
     static std::vector<mpz_class> keygen(gmp_randstate_t state, uint nbits = 1024);
-    
+
     mpz_class encrypt(const mpz_class &plaintext);
 private:
     const mpz_class g_star_;

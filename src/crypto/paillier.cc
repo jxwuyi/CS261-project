@@ -7,12 +7,12 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  ciphermed is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with ciphermed.  If not, see <http://www.gnu.org/licenses/>. 2
  *
@@ -67,7 +67,7 @@ Paillier::encrypt(const mpz_class &plaintext)
             // g = n+1 -> we can avoid an exponentiation
             return ((1+plaintext*n)*rn) %n2;
         }
-        
+
         return (mpz_class_powm(g,plaintext,n2) * rn) % n2;
     } else {
         mpz_class r;
@@ -125,7 +125,7 @@ void Paillier::refresh(mpz_class &c)
     if (i != rqueue.end()) {
         rn = *i;
         rqueue.pop_front();
-        
+
     } else {
         mpz_class r;
         mpz_urandomm(r.get_mpz_t(),_randstate,n.get_mpz_t());
@@ -148,7 +148,7 @@ mpz_class Paillier::dot_product(const std::vector<mpz_class> &c, const std::vect
 {
     assert(c.size() == v.size());
     mpz_class x = 1;
-    
+
     for (size_t i = 0; i < v.size(); i++) {
         if (v[i] == 0) {
             continue;
@@ -156,7 +156,7 @@ mpz_class Paillier::dot_product(const std::vector<mpz_class> &c, const std::vect
 
         x = add(x, constMult(v[i],c[i]));
     }
-    
+
     return x;
 
 }
@@ -165,14 +165,14 @@ mpz_class Paillier::dot_product(const std::vector<mpz_class> &c, const std::vect
 {
     assert(c.size() == v.size());
     mpz_class x = 1;
-    
+
     for (size_t i = 0; i < v.size(); i++) {
         if (v[i] == 0) {
             continue;
         }
         x = add(x, constMult(v[i],c[i]));
     }
-    
+
     return x;
 }
 
@@ -219,7 +219,7 @@ void Paillier_priv::find_crt_factors()
 {
     mpz_class d, u_p2,u_q2;
     mpz_gcdext(d.get_mpz_t(),u_p2.get_mpz_t(),u_q2.get_mpz_t(),p2.get_mpz_t(),q2.get_mpz_t());
-    
+
     assert(d == 1);
     e_p2 = (q2*u_q2) %n2;
     e_q2 = (p2*u_p2) %n2;
@@ -284,7 +284,7 @@ Paillier_priv::encrypt(const mpz_class &plaintext)
     if (i != rqueue.end()) {
         rqueue.pop_front();
         rn = *i;
-        
+
         mpz_class c;
         mpz_class c_p;
         mpz_class c_q;
@@ -314,8 +314,8 @@ Paillier_priv::encrypt(const mpz_class &plaintext)
             // g = n+1 -> we can avoid an exponentiation
             c_p = ((1+plaintext*n)*r_p) % p2;
             c_q = ((1+plaintext*n)*r_q) % q2;
-            
-            
+
+
             //            return ((1+plaintext*n)*r) %n2;
         }else{
             c_p = mpz_class_powm(g,plaintext, p2)*r_p %p2;
@@ -336,12 +336,12 @@ Paillier_priv::fast_encrypt_precompute(const mpz_class &plaintext)
         return encrypt(plaintext);
     }
     mpz_class rn;
-    
+
     auto i = rqueue.begin();
     if (i != rqueue.end()) {
         rqueue.pop_front();
         rn = *i;
-        
+
         mpz_class c;
         mpz_class c_p;
         mpz_class c_q;
@@ -354,33 +354,33 @@ Paillier_priv::fast_encrypt_precompute(const mpz_class &plaintext)
             c_q = mpz_class_powm(g,plaintext, q2);
         }
         c =  (c_p*e_p2 + c_q*e_q2) % n2;
-        
+
         return (c*rn) %n2;
     } else {
         mpz_class r;
         mpz_urandomm(r.get_mpz_t(),_randstate,n.get_mpz_t());
-        
+
         mpz_class r_p,r_q;
         r_p = mpz_class_powm(r,n,p2);
         r_q = mpz_class_powm(r,n,q2);
         mpz_class c_p;
         mpz_class c_q;
-        
+
         if (good_generator) {
             // g = n+1 -> we can avoid an exponentiation
             c_p = ((1+plaintext*n)*r_p) % p2;
             c_q = ((1+plaintext*n)*r_q) % q2;
-            
+
         }else{
             c_p = mpz_class_powm(g,plaintext, p2)*r_p %p2;
             c_q = mpz_class_powm(g,plaintext, q2)*r_q %q2;
         }
-        
+
         // g = n+1 -> we can avoid an exponentiation
-        
+
         return (c_p*e_p2 + c_q*e_q2) % n2;
     }
-    
+
 }
 
 
@@ -394,10 +394,10 @@ Paillier_priv::decrypt(const mpz_class &ciphertext) const
 
     mpz_class m;
     m = mpz_class_crt_2(mp,mq,p,q);
-    
+
     if (m < 0)
         return (m + n);
-    
+
     return m;
 }
 
@@ -416,12 +416,12 @@ void Paillier_priv_fast::precompute_powers()
     g_star_powers_p_[0] = g_star_ % p2;
     g_star_powers_q_ = vector<mpz_class>(phi_n2_bits);
     g_star_powers_q_[0] = g_star_ % q2;
-    
+
     for (size_t i = 1; i < bits; i++) {
         g_star_powers_p_[i] = (g_star_powers_p_[i-1]*g_star_powers_p_[i-1]) %p2;
         g_star_powers_q_[i] = (g_star_powers_q_[i-1]*g_star_powers_q_[i-1]) %q2;
     }
-    
+
 }
 
 mpz_class Paillier_priv_fast::compute_g_star_power(const mpz_class &x)
@@ -441,7 +441,7 @@ mpz_class Paillier_priv_fast::compute_g_star_power(const mpz_class &x)
         }
 
     }
-    
+
     return mpz_class_crt_2(v_p,v_q,p2,q2);
 }
 
@@ -449,18 +449,18 @@ mpz_class Paillier_priv_fast::encrypt(const mpz_class &plaintext)
 {
     mpz_class r_prime;
     mpz_urandomm(r_prime.get_mpz_t(),_randstate,phi_n.get_mpz_t());
-    
+
     mpz_class r = compute_g_star_power(r_prime*n);
-    
+
     mpz_class c_p;
     mpz_class c_q;
-    
+
     // g = n+1 -> we can avoid an exponentiation
     c_p = ((1+plaintext*n)) % p2;
     c_q = ((1+plaintext*n)) % q2;
-        
+
     mpz_class c =  mpz_class_crt_2(c_p,c_q,p2,q2);
-    
+
     return (c*r %n2);
 }
 
@@ -474,19 +474,19 @@ vector<mpz_class> Paillier_priv_fast::keygen(gmp_randstate_t state, uint nbits)
         gen_germain_prime(q,nbits/2,state, error);
         n = p*q;
     } while ((nbits != (uint) mpz_sizeinbase(n.get_mpz_t(),2)) || p == q);
-    
+
     if (p > q)
         swap(p, q);
-    
+
     mpz_class lambda = LCM(p-1, q-1);
     g = n+1;
-    
+
     // find a generator for Z^*_n
     mpz_class g_p, g_q;
     g_p = get_generator_for_cyclic_group(p,state);
     g_q = get_generator_for_cyclic_group(q,state);
-    
+
     g_star = mpz_class_crt_2(g_p,g_q,p,q);
-    
+
     return {p, q, g, g_star};
 }
