@@ -40,10 +40,10 @@ void run() {
     Paillier p(pk,randstate);
     
     // Launch Client Util
-    util = new DL_Client_Util(p, pp, randstate);
+    util = new DL_Client_Util(&p, &pp);
     
     // Launch Server
-    server = new DL_Server(p, util);
+    server = new DL_Server(&p, util);
 }
 
 int main() {

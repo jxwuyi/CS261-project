@@ -18,7 +18,8 @@
 using std::vector;
 
 template<class T>
-struct Storage<T> {
+class Storage {
+public:
   int k; // channel
   int n, m; // size (n x m)
   vector<T> dat;

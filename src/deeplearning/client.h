@@ -17,8 +17,7 @@ class DL_Client_Util {
 public:
   DL_Client_Util(
     Paillier* _p_enc,
-    Paillier_priv_fast * _p_dec,
-    gmp_randstate_t _randstate){
+    Paillier_priv_fast * _p_dec){
     p_enc = _p_enc;
     p_dec = _p_dec;
     zero = "0";
