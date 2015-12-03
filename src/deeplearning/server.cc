@@ -38,7 +38,7 @@ void DL_Server::compute_dot_product(
   //////////////////////////
   // assert(unpacked_result.size() >= pos_x.size())
   vector<mpz_class> target_value 
-    = client->normalize(unpacked_result, sum_A, sum_param, idx.size(), shift, base);
+    = client->normalize(unpacked_result, sumA, sum_param, idx.size(), shift, base);
   for(int i=0;i<pos_x.size();++i) {
     next.at(ch, pos_x[i], pos_y[i]) = target_value[i];
   }
@@ -138,7 +138,7 @@ int DL_Server::classify(mpz_class** dat, int n) {
     // Non-Linear Layer
     //////////////////////////////////////
     
-    client->set_cache(curr);
+    client->set_cache(curr.dat);
     
     if(layer.type < 0) { // prediction/final layer
       return client->get_argmax();
@@ -146,7 +146,7 @@ int DL_Server::classify(mpz_class** dat, int n) {
     if(layer.type == 0) { // ReLu layer
       mpz_class m_base(base);
       client->minus(m_base); // now client stores all the true values 
-      curr = client->get_ReLu(m_base);
+      curr.dat = client->get_ReLu(m_base);
     } else { // Max Pooling Layer
       // Size will change
       int step = layer.type;
