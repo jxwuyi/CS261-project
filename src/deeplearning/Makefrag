@@ -3,11 +3,6 @@ NN_SRC  := test.cc eval.cc server.cc
 
 DL_OBJ := $(patsubst %.cc,$(OBJDIR)/deeplearning/%.o,$(NN_SRC))
 
-all:    $(OBJDIR)/deeplearning/test
-$(OBJDIR)/deeplearning/test: $(OBJDIR)/deeplearning/test.o $(OBJDIR)/libcipher.so $(OBJDIR)/libmath.so
-	$(CXX) $< -o $@ $(LDFLAGS) -lmath -lutil -lcipher \
-	   -L$(NTLLIBPATH) -L$(NTLLIBPATH) -lntl
-
 all:    $(OBJDIR)/libdlearn.so
 $(OBJDIR)/libdlearn.so: $(DL_OBJ) $(OBJDIR)/libcipher.so $(OBJDIR)/libmath.so
 	$(CXX) -shared -o $@ $(DL_OBJ) $(LDFLAGS) -lgmpxx -lgmp
