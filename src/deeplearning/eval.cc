@@ -16,6 +16,7 @@
 #include<iostream>
 
 using namespace std;
+using namespace NTL;
 
 
 void load_mnist() {
