@@ -1,5 +1,5 @@
 OBJDIRS += deeplearning
-NN_SRC  := test.cc eval.cc server.cc
+NN_SRC  := test.cc server.cc
 
 DL_OBJ := $(patsubst %.cc,$(OBJDIR)/deeplearning/%.o,$(NN_SRC))
 
