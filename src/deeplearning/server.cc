@@ -22,23 +22,23 @@ void DL_Server::compute_dot_product(
   /////////////////////////
   // get packed values
   vector<mpz_class> packed_values 
-      = client.pack_all_from_index(simd, idx);
+      = client->pack_all_from_index(simd, idx);
   // compute dot product
   mpz_class result = p->dot_product(packed_values, enc_param);
   // unpack results
-  vector<mpz_class> unpacked_result = client.get_unpack(simd, result);
+  vector<mpz_class> unpacked_result = client->get_unpack(simd, result);
   
   //////////////////////////
   //  Summation of A
   //////////////////////////
-  vector<mpz_class> sumA = client.calc_sum_from_index(idx);
+  vector<mpz_class> sumA = client->calc_sum_from_index(idx);
   
   //////////////////////////
   //  Final Results
   //////////////////////////
   // assert(unpacked_result.size() >= pos_x.size())
   vector<mpz_class> target_value 
-    = client.normalize(unpacked_result, sum_A, sum_param, idx.size(), shift, base);
+    = client->normalize(unpacked_result, sum_A, sum_param, idx.size(), shift, base);
   for(int i=0;i<pos_x.size();++i) {
     next.at(ch, pos_x[i], pos_y[i]) = target_value[i];
   }
@@ -73,7 +73,7 @@ int DL_Server::classify(mpz_class** dat, int n) {
     // initial size
     next.init(layer.k_out, curr.n - layer.n + 1, curr.m - layer.m + 1);
     
-    client.set_cache(curr.dat);
+    client->set_cache(curr.dat);
     vector<vector<int> > idx;
     vector<mpz_class> param;
     vector<mpz_class> enc_param;
@@ -138,15 +138,15 @@ int DL_Server::classify(mpz_class** dat, int n) {
     // Non-Linear Layer
     //////////////////////////////////////
     
-    client.set_cache(curr);
+    client->set_cache(curr);
     
     if(layer.type < 0) { // prediction/final layer
-      return client.get_argmax();
+      return client->get_argmax();
     } else 
     if(layer.type == 0) { // ReLu layer
       mpz_class m_base(base);
-      client.minus(m_base); // now client stores all the true values 
-      curr = client.get_ReLu(m_base);
+      client->minus(m_base); // now client stores all the true values 
+      curr = client->get_ReLu(m_base);
     } else { // Max Pooling Layer
       // Size will change
       int step = layer.type;
@@ -155,7 +155,7 @@ int DL_Server::classify(mpz_class** dat, int n) {
       int ptr = 0;
       for(int k=0;k<curr.k;++k) {
         vector<mpz_class> tmp =
-          client.get_max(ptr,curr.n,curr.m,step);
+          client->get_max(ptr,curr.n,curr.m,step);
         ptr += layer_size;
         int j=0;
         for(int x=0;x<next.n;++x)
@@ -165,4 +165,6 @@ int DL_Server::classify(mpz_class** dat, int n) {
       curr = next;
     }
   }
+  
+  return -1;// should not reach here
 }
