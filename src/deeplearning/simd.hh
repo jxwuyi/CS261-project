@@ -12,6 +12,9 @@ class SIMD {
         // to 1024 bit data.
         assert(nbits == 64);
         assert(ndata == 16);
+        
+        nbits_ = nbits
+        ndata_ = ndata;
 
         mpz_t m1;
         mpz_init_set_ui(m1, 2);
@@ -21,7 +24,7 @@ class SIMD {
         mpz_init(packed_);
     }
 
-    int get_ndata() {return n_data;}
+    int get_ndata() {return ndata_;}
 
     mpz_class Pack(std::vector<mpz_class> inputs) {
         mpz_init_set_ui(packed_, 1);
