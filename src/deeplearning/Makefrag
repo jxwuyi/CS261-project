@@ -8,5 +8,5 @@ $(OBJDIR)/libdlearn.so: $(DL_OBJ) $(OBJDIR)/libcipher.so $(OBJDIR)/libmath.so
 	$(CXX) -shared -o $@ $(DL_OBJ) $(LDFLAGS) -lgmpxx -lgmp
 
 all:    $(OBJDIR)/deeplearning/eval
-$(OBJDIR)/deeplearning/eval: $(OBJDIR)/deeplearning/eval.o $(OBJDIR)/libdlearn.so
+$(OBJDIR)/deeplearning/eval: $(OBJDIR)/deeplearning/eval.o $(OBJDIR)/libdlearn.so $(OBJDIR)/libcipher.so $(OBJDIR)/libmath.so
 	$(CXX) $< -o $@ $(LDFLAGS) -lmath -lntl
