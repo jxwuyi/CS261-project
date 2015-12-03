@@ -5,8 +5,8 @@ DL_OBJ := $(patsubst %.cc,$(OBJDIR)/deeplearning/%.o,$(NN_SRC))
 
 all:    $(OBJDIR)/libdlearn.so
 $(OBJDIR)/libdlearn.so: $(DL_OBJ) $(OBJDIR)/libcipher.so $(OBJDIR)/libmath.so
-	$(CXX) -shared -o $@ $(DL_OBJ) $(LDFLAGS) -lgmpxx -lgmp
+	$(CXX) -shared -o $@ $(DL_OBJ) $(LDFLAGS) -lgmpxx -lgmp -lmath -lutil
 
 all:    $(OBJDIR)/deeplearning/eval
 $(OBJDIR)/deeplearning/eval: $(OBJDIR)/deeplearning/eval.o $(OBJDIR)/libdlearn.so $(OBJDIR)/libcipher.so $(OBJDIR)/libmath.so
-	$(CXX) $< -o $@ $(LDFLAGS) -lmath -lntl
+	$(CXX) $< -o $@ $(LDFLAGS) -lgmpxx -lgmp -lmath -lntl
