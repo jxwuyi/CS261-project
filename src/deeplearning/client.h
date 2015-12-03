@@ -86,7 +86,7 @@ public:
     mpz_class k_sB = k * sum_B;
     for(int i=0;i<cache.size();++i) {
       // Compute True Dot Product Result
-      result[i] = result[i] - nk2 - k_sb - k *sumA[i];
+      result[i] = result[i] - nk2 - k_sB - k *sumA[i];
       // Normalization
       result[i] /= base;
       // Add shift
