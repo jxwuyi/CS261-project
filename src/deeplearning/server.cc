@@ -151,7 +151,7 @@ int DL_Server::classify(mpz_class** dat, int n) {
       // Size will change
       int step = layer.type;
       next.init(curr.k, ( curr.n + step - 1 ) / step, ( curr.m + step - 1 ) / step);
-      int layer_size = curr.n * curr_m;
+      int layer_size = curr.n * curr.m;
       int ptr = 0;
       for(int k=0;k<curr.k;++k) {
         vector<mpz_class> tmp =
