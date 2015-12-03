@@ -2,6 +2,7 @@
 
 #include <gmpxx.h>
 #include <assert.h>
+#include <algorithm>
 
 class SIMD {
   public:
@@ -20,6 +21,8 @@ class SIMD {
         mpz_init(packed_);
     }
 
+    int get_ndata() {return n_data;}
+
     mpz_class Pack(std::vector<mpz_class> inputs) {
         mpz_init_set_ui(packed_, 1);
         size_t size = inputs.size();
@@ -30,7 +33,6 @@ class SIMD {
         return mpz_class(packed_);
     }
 
-    // result has a reversed order
     std::vector<mpz_class> UnPack(mpz_class input) {
         std::vector<mpz_class> result;
 
@@ -47,6 +49,8 @@ class SIMD {
             mpz_set(new_input, q);
             result.emplace_back(mpz_class(r));
         }
+        std::reverse(result.begin(), result.end());
+        
         return result;
     }
   private:
