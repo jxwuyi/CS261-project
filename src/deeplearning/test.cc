@@ -18,12 +18,12 @@ using namespace std;
 using namespace NTL;
 
 
-static void test_mnist_load() {
+void test_mnist_load() {
     MNIST mnist;
     mnist.loadData("/home/benzh/Downloads/t10k-images-idx3-ubyte");
 }
 
-static void test_paillier_dot_product() {
+void test_paillier_dot_product() {
     cout << "Test Paillier Dot Product ...\n" << flush;
 
     gmp_randstate_t randstate;
