@@ -13,7 +13,7 @@ class SIMD {
         assert(nbits == 64);
         assert(ndata == 16);
         
-        nbits_ = nbits
+        nbits_ = nbits;
         ndata_ = ndata;
 
         mpz_t m1;
