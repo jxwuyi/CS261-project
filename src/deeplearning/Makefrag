@@ -1,5 +1,5 @@
 OBJDIRS += deeplearning
-NN_SRC  := test.cc server.cc
+NN_SRC  := test.cc server.cc eval.cc
 
 DL_OBJ := $(patsubst %.cc,$(OBJDIR)/deeplearning/%.o,$(NN_SRC))
 
@@ -9,4 +9,5 @@ $(OBJDIR)/libdlearn.so: $(DL_OBJ) $(OBJDIR)/libcipher.so $(OBJDIR)/libmath.so
 
 all:    $(OBJDIR)/deeplearning/eval
 $(OBJDIR)/deeplearning/eval: $(OBJDIR)/deeplearning/eval.o $(OBJDIR)/libdlearn.so $(OBJDIR)/libcipher.so $(OBJDIR)/libmath.so
-	$(CXX) $< -o $@ $(LDFLAGS) -lgmpxx -lgmp -lmath -lntl
+	$(CXX) $< -o $@ $(LDFLAGS) -lgmpxx -lgmp -lmath -lntl -lcipher
+
