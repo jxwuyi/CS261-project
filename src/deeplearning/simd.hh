@@ -12,9 +12,6 @@ class SIMD {
         // to 1024 bit data.
         assert(nbits == 64);
         assert(ndata == 16);
-        
-        nbits_ = nbits;
-        ndata_ = ndata;
 
         mpz_t m1;
         mpz_init_set_ui(m1, 2);
