@@ -19,15 +19,15 @@ using namespace std;
 using namespace NTL;
 
 
-void load_mnist() {
+static void load_mnist() {
     MNIST mnist;
     mnist.loadData("/home/benzh/Downloads/t10k-images-idx3-ubyte");
 }
 
-DL_Client_Util* util;
-DL_Server* server;
+static DL_Client_Util* util;
+static DL_Server* server;
 
-void run() {
+static void run() {
     cout << "Test Paillier Dot Product ...\n" << flush;
 
     gmp_randstate_t randstate;
