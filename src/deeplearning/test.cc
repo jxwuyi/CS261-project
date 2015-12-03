@@ -94,7 +94,7 @@ static void test_paillier_dot_product() {
     cout << "dot product: "<< ((double) t/1000000) <<" ms per plaintext" << endl;
 }
 
-int main(int ac, char **av) {
+int test_main(int ac, char **av) {
     test_mnist_load();
 
     test_paillier_dot_product();
