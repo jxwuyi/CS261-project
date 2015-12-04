@@ -54,6 +54,7 @@ void run() {
     int total = mnist.size();
     int n_row = mnist.row();
     int n_col = mnist.col();
+    int base = server->get_base();
     int correct = 0;
     int wrong = 0;
     
@@ -62,8 +63,8 @@ void run() {
     
     for(int i=1;i<=total;++i){
       int ans = mnist.label(i);
-      int rec = 
-        server->classify(util->preprocess(mnist.image(i), n_row, n_col));
+      int rec = server->classify(
+        util->preprocess(mnist.image(i), n_row, n_col, base));
       if (ans == rec) ++ correct;
       else ++ wrong;
       
@@ -71,11 +72,11 @@ void run() {
         // Report Result
         cout << "Image "<<i << " / total ("<< ((int)(i*100.0/total)) <<"\%)" << endl;
         printf( "  >> Correct = %d (%.2lf\%)\n", correct, (double)(100.0*correct/i));
-        printf( "  >> Wrong = %d (%.2f\%)\n", wrong, (100.0*wrong/i));
+        printf( "  >> Wrong = %d (%.2lf\%)\n", wrong, (double)(100.0*wrong/i));
         
         std::chrono::duration<double> __elapsed_seconds = 
             std::chrono::system_clock::now()-__start_time;
-        printf( "   --> Time Elasped = %fs\n", __elapsed_seconds.count());
+        printf( "   --> Time Elasped = %lfs\n", (double)__elapsed_seconds.count());
       }
       
     }
