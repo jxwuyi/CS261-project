@@ -28,8 +28,8 @@ MNIST mnist;
 
 void load_mnist() {
     mnist.loadData(
-      "/home/benzh/Downloads/t10k-images-idx3-ubyte",
-      "/home/benzh/Downloads/t10k-labels-idx1-ubyte");
+      "/home/yi/ciphermed/src/deeplearning/t10k-images-idx3-ubyte",
+      "/home/yi/ciphermed/src/deeplearning/t10k-labels-idx1-ubyte");
 }
 
 void run() {
