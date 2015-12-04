@@ -6,12 +6,22 @@ using namespace std;
 
 void DL_Server::load_model(char *filename) {
   model.clear();
-  // TODO: load model parameters
+  FILE *inf = fopen(filename, "r");
+  assert(inf != NULL);
+  
+  int n_layer;
+  fscanf(inf, "%d", &n_layer);
+  model.resize(n_layer);
+  for(auto&layer: model)
+    layer.load_layer(inf, base);
+  
+  fclose(inf);
 }
 
 void DL_Server::compute_dot_product(
   vector<mpz_class>& enc_param,
   mpz_class& sum_param,
+  mpz_class& bias,
   vector<vector<int> >&idx, 
   Storage<mpz_class>& next, 
   int ch, // channel
@@ -38,7 +48,7 @@ void DL_Server::compute_dot_product(
   //////////////////////////
   // assert(unpacked_result.size() >= pos_x.size())
   vector<mpz_class> target_value 
-    = client->normalize(unpacked_result, sumA, sum_param, idx.size(), shift, base);
+    = client->normalize(unpacked_result, sumA, sum_param, bias, idx.size(), shift, base);
   for(int i=0;i<pos_x.size();++i) {
     next.at(ch, pos_x[i], pos_y[i]) = target_value[i];
   }
@@ -83,6 +93,7 @@ int DL_Server::classify(mpz_class** dat, int n) {
     
     for(int ch = 0; ch < layer.k_out; ++ ch) {
       // set parameters
+      mpz_class m_bias(layer.bias[ch]);
       Storage<int> filter = layer.at(ch);
       param.resize(len);
       mpz_class sum_param(0);
@@ -112,6 +123,7 @@ int DL_Server::classify(mpz_class** dat, int n) {
           if(++ cnt == ndata) {
             compute_dot_product(
               enc_param, sum_param, 
+              m_bias,
               idx,
               next, ch,
               pos_x, pos_y);
@@ -124,6 +136,7 @@ int DL_Server::classify(mpz_class** dat, int n) {
         if(cnt > 0) {
           compute_dot_product(
               enc_param, sum_param,
+              m_bias,
               idx,
               next, ch,
               pos_x, pos_y);
@@ -144,9 +157,9 @@ int DL_Server::classify(mpz_class** dat, int n) {
       return client->get_argmax();
     } else 
     if(layer.type == 0) { // ReLu layer
-      mpz_class m_base(base);
-      client->minus(m_base); // now client stores all the true values 
-      curr.dat = client->get_ReLu(m_base);
+      mpz_class m_shift(shift);
+      client->minus(m_shift); // now client stores all the true values 
+      curr.dat = client->get_ReLu(m_shift);
     } else { // Max Pooling Layer
       // Size will change
       int step = layer.type;

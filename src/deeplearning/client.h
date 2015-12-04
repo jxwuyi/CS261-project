@@ -74,6 +74,7 @@ public:
   vector<mpz_class> normalize(
     vector<mpz_class> result, vector<mpz_class> sumA, 
     mpz_class sum_B, 
+    mpz_class bias, 
     int _n, int _k, int _base) {
     // result & sumA is encrypted
     assert(sumA.size() == result.size());
@@ -89,6 +90,8 @@ public:
       result[i] = result[i] - nk2 - k_sB - k *sumA[i];
       // Normalization
       result[i] /= base;
+      // Add Bias
+      result[i] += bias;
       // Add shift
       result[i] += k;
     }

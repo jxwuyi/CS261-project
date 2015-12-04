@@ -49,22 +49,35 @@ struct Layer {
   // NOTE:
   // Assume:
   // dat[i][j] = round(true_dat * base)
+  //   bias[i] = round(true_bias * base)
   vector<Storage<int> > dat;
+  vector<int> bias;
   
   // -1: none(prediction); 0: ReLu; type > 0: max pooling dim = type
   int type;
   Layer(){type = -1;}
   
   int bas1, bas2, bas3;
-  void load_Layer(FILE *inf, int _k_out, int _k_in, int _n, int _m, int base) {
-    k_out = _k_out;
-    k_in = _k_in;
-    n = _n;
-    m = _m;
-    dat.clear();
-    // TODO: load data from File and store in dat
-    //    only keey precision <base>
+  void load_Layer(FILE *inf, int base) {
+    fscanf(inf, "%d %d %d %d %d", &k_out, &k_in, &n, &m, &type);
+    dat.resize(k_out);
+    for(auto&ch : dat) {
+      ch.init(k_in, n, m);
+      for(int k=0;k<k_in;++k)
+        for(int i=0;i<n;++i)
+          for(int j=0;j<m;++j) {
+            double val;
+            fscanf(inf, "%lf", &val);
+            ch.at(k,i,j) = (int)(val * base);
+          }
+    }
+    bias.resize(k_out);
+    for(int i=0;i<k_out;++i){
+      double val;fscanf(inf,"%lf",&val);
+      bias[i] = (int)(val * base);
+    }
   }
+  
   void set_type(int t) {
     type = t;
   }
@@ -90,7 +103,7 @@ public:
     client = _cl;
     
     // default parameters
-    shift = 1000; // add <shift> to avoid negative values
+    shift = 1000000; // add <shift> to avoid negative values
     base = 1000; // remain 3 digits
   }
   
@@ -126,6 +139,7 @@ private:
   void compute_dot_product(
       vector<mpz_class>& enc_param,
       mpz_class& sum_param,
+      mpz_class& bias,
       vector<vector<int> >&idx, 
       Storage<mpz_class>& next, 
       int ch,
