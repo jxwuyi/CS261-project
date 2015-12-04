@@ -20,8 +20,8 @@ class MNIST {
     }
     
     int size() {return num_images_;}
-    int n_row() {return image_row_;}
-    int n_col() {return image_col_;}
+    int row() {return image_row_;}
+    int col() {return image_col_;}
     uchar* image(int k) {return images[k];}
     uchar label(int k){return labels[k];}
 
