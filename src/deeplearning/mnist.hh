@@ -19,7 +19,7 @@ class MNIST {
         labels = read_labels(label_path);
     }
     
-    int size() {return num_images;}
+    int size() {return num_images_;}
     int n_row() {return image_row_;}
     int n_col() {return image_col_;}
     uchar* image(int k) {return images[k];}
