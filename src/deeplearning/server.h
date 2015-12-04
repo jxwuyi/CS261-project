@@ -58,7 +58,7 @@ struct Layer {
   Layer(){type = -1;}
   
   int bas1, bas2, bas3;
-  void load_Layer(FILE *inf, int base) {
+  void load(FILE *inf, int base) {
     fscanf(inf, "%d %d %d %d %d", &k_out, &k_in, &n, &m, &type);
     dat.resize(k_out);
     for(auto&ch : dat) {

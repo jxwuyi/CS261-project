@@ -13,7 +13,7 @@ void DL_Server::load_model(char *filename) {
   fscanf(inf, "%d", &n_layer);
   model.resize(n_layer);
   for(auto&layer: model)
-    layer.load_layer(inf, base);
+    layer.load(inf, base);
   
   fclose(inf);
 }
