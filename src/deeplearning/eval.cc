@@ -48,6 +48,8 @@ void run() {
     
     // Launch Server
     server = new DL_Server(&p, util);
+    server->load_model(
+      "/home/yi/ciphermed/src/deeplearning/model_weights.txt");
     
     cout << "Server and Client successfully launched!" << endl;
     

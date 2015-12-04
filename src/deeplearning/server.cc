@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void DL_Server::load_model(char *filename) {
+void DL_Server::load_model(const char *filename) {
   model.clear();
   FILE *inf = fopen(filename, "r");
   assert(inf != NULL);
