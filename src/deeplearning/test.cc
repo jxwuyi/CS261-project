@@ -20,7 +20,9 @@ using namespace NTL;
 
 void test_mnist_load() {
     MNIST mnist;
-    mnist.loadData("/home/benzh/Downloads/t10k-images-idx3-ubyte");
+    mnist.loadData(
+      "/home/benzh/Downloads/t10k-images-idx3-ubyte",
+      "/home/benzh/Downloads/t10k-labels-idx1-ubyte");
 }
 
 void test_paillier_dot_product() {

@@ -54,15 +54,15 @@ void DL_Server::compute_dot_product(
   }
 }
 
-int DL_Server::classify(mpz_class** dat, int n) {
+int DL_Server::classify(vector<vector<mpz_class> > dat) {
   /*
     Assume: 
       dat[i][j] = encrypt(round(digit[i][j] * base + shift))
   */
   Storage<mpz_class> curr, next;
-  curr.init(1, n, n);
-  for(int i=0;i<n;++i) {
-    for(int j=0;j<n;++j)
+  curr.init(1, dat.size(), dat[0].size());
+  for(int i=0;i<dat.size();++i) {
+    for(int j=0;j<dat[0].size();++j)
       curr.at(0,i,j) = dat[i][j];
   }
   

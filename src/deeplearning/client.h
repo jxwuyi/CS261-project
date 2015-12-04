@@ -159,6 +159,24 @@ public:
     }
     return pos;
   }
+  
+  vector<vector<mpz_class> > preprocess(
+    unsigned char* image, int n, int m, int base) {
+    // first normalize to -1 ~ 1
+    //    [0, 255] --> [0, 1]
+    //       x = (x / 255)
+    vector<vector<mpz_class> > dat;
+    dat.resize(n);
+    for(int i=0;i<n;++i) {
+      for(int j=0;j<m;++j) {
+        int x = (int) image[i * m + j];
+        mpz_class m_x((int)((x / 255.0) * base));
+        dat[i].push_back(p_enc->encrypt(m_x));
+      }
+    }
+    return dat;
+  }
+  
 private:
   mpz_class zero, enc_zero;
   vector<mpz_class> cache;

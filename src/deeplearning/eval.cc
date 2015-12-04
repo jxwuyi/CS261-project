@@ -12,24 +12,27 @@
 #include <limits.h>
 
 #include <ctime>
+#include <chrono>
 
 #include<iostream>
 
 using namespace std;
-using namespace NTL;
+//using namespace NTL;
+
+const int ReportStep = 1000;
 
 
-static void load_mnist() {
-    MNIST mnist;
-    mnist.loadData("/home/benzh/Downloads/t10k-images-idx3-ubyte");
+DL_Client_Util* util;
+DL_Server* server;
+MNIST mnist;
+
+void load_mnist() {
+    mnist.loadData(
+      "/home/benzh/Downloads/t10k-images-idx3-ubyte",
+      "/home/benzh/Downloads/t10k-labels-idx1-ubyte");
 }
 
-static DL_Client_Util* util;
-static DL_Server* server;
-
-static void run() {
-    cout << "Test Paillier Dot Product ...\n" << flush;
-
+void run() {
     gmp_randstate_t randstate;
     gmp_randinit_default(randstate);
     gmp_randseed_ui(randstate, time(NULL));
@@ -45,10 +48,46 @@ static void run() {
     
     // Launch Server
     server = new DL_Server(&p, util);
+    
+    cout << "Server and Client successfully launched!" << endl;
+    
+    int total = mnist.size();
+    int n_row = mnist.row();
+    int n_col = mnist.col();
+    int correct = 0;
+    int wrong = 0;
+    
+    std::chrono::time_point<std::chrono::system_clock> __start_time 
+      = std::chrono::system_clock::now();
+    
+    for(int i=1;i<=total;++i){
+      int ans = mnist.label(i);
+      int rec = 
+        server->classify(util->preprocess(mnist.image(i), n_row, n_col));
+      if (ans == rec) ++ correct;
+      else ++ wrong;
+      
+      if (i % ReportStep == 0 || i == total) {
+        // Report Result
+        cout << "Image "<<i << " / total ("<< ((int)(i*100.0/total)) <<"\%)" << endl;
+        printf( "  >> Correct = %d (%.2lf\%)\n", correct, (double)(100.0*correct/i));
+        printf( "  >> Wrong = %d (%.2f\%)\n", wrong, (100.0*wrong/i));
+        
+        std::chrono::duration<double> __elapsed_seconds = 
+            std::chrono::system_clock::now()-__start_time;
+        printf( "   --> Time Elasped = %fs\n", __elapsed_seconds.count());
+      }
+      
+    }
+    
+    
+    delete util;
+    delete server;
 }
 
 int main() {
     load_mnist();
+    cout << "MNIST successfully loaded!" << endl;
 
     run();
 

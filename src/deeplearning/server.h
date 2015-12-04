@@ -118,7 +118,7 @@ public:
   void load_model(char * filename);
   
   // classification
-  int classify(mpz_class** dat, int n);
+  int classify(vector<vector<mpz_class> > dat);
   
 private:
   
