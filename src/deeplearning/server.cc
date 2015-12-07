@@ -74,8 +74,10 @@ int DL_Server::classify_plain(vector<vector<mpz_class> >dat) {
               mpz_class val(0);
               for(int k=0;k<filter.k;++k) {
                 for(int dx=0; dx<filter.n; dx++)
-                  for(int dy=0; dy<filter.m; dy++)
-                    val += filter.at(k,dx,dy) * curr.at(k.x+dx,y+dy);
+                  for(int dy=0; dy<filter.m; dy++) {
+                    mpz_class coef(filter.at(k,dx,dy));
+                    val += coef * curr.at(k.x+dx,y+dy);
+                  }
               val /= base;
               val += m_bias;
               next.at(ch,x,y) = val;
@@ -114,6 +116,7 @@ int DL_Server::classify_plain(vector<vector<mpz_class> >dat) {
       }
     }
   }
+  return -1;
 }
 
 int DL_Server::classify(vector<vector<mpz_class> > dat) {
