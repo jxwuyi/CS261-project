@@ -14,8 +14,8 @@ class MNIST {
 
     void loadData(string image_path, string label_path) {
         images = read_images(image_path, num_images_, image_size_, image_row_, image_col_);
-        // std::cout << "Loaded " << num_images_ << "images "
-        // << "with size" << image_size_;
+         std::cout << "Loaded " << num_images_ << "images "
+         << "with size" << image_size_ << std::endl;
         labels = read_labels(label_path);
     }
     
