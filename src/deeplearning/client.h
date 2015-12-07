@@ -80,14 +80,14 @@ public:
     // (A + K) * (B + K) = A * B + (sum{A} - n * K) * K + K * B + K * K
     // result & sumA is encrypted
     assert(sumA.size() == result.size());
-    mpz_class nk(n * k);
+    mpz_class k(_k), n(_n), base(_base);
+    mpz_class nk2 = n * k * k;
+    mpz_class k_sB = k * sum_B;
+    mpz_class nk = n * k;
     for(int i=0;i<sumA.size();++i) {
       sumA[i] = p_dec->decrypt(sumA[i]) - nk;
       result[i] = p_dec->decrypt(result[i]);
     }
-    mpz_class k(_k), n(_n), base(_base);
-    mpz_class nk2 = n * k * k;
-    mpz_class k_sB = k * sum_B;
     for(int i=0;i<cache.size();++i) {
       // Compute True Dot Product Result
       result[i] = result[i] - nk2 - k_sB - k *sumA[i];
