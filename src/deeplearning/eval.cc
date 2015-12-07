@@ -57,6 +57,7 @@ void run() {
     int n_row = mnist.row();
     int n_col = mnist.col();
     int base = server->get_base();
+    int shift = server->get_shift();
     int correct = 0;
     int wrong = 0;
     
@@ -65,8 +66,16 @@ void run() {
     
     for(int i=1;i<=total;++i){
       int ans = mnist.label(i);
+      /*
+      // Encrypted Data
       int rec = server->classify(
-        util->preprocess(mnist.image(i), n_row, n_col, base));
+        util->preprocess(mnist.image(i), n_row, n_col, shift, base));
+      */
+      
+      // Plain Data
+      int rec = server->classify_plain(
+        util->preprocess_plain(mnist.image(i), n_row, n_col, base)); // not shift required
+      
       if (ans == rec) ++ correct;
       else ++ wrong;
       

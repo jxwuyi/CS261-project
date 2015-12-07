@@ -120,6 +120,8 @@ public:
   // classification
   int classify(vector<vector<mpz_class> > dat);
   
+  int classify_plain(vector<vector<mpz_class> > dat);
+  
 private:
   
   void clear_temp_params(

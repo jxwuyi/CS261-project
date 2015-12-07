@@ -76,10 +76,13 @@ public:
     mpz_class sum_B, 
     mpz_class bias, 
     int _n, int _k, int _base) {
+    // K : shift;   n : vector dimension
+    // (A + K) * (B + K) = A * B + (sum{A} - n * K) * K + K * B + K * K
     // result & sumA is encrypted
     assert(sumA.size() == result.size());
+    mpz_class nk(n * k);
     for(int i=0;i<sumA.size();++i) {
-      sumA[i] = p_dec->decrypt(sumA[i]);
+      sumA[i] = p_dec->decrypt(sumA[i]) - nk;
       result[i] = p_dec->decrypt(result[i]);
     }
     mpz_class k(_k), n(_n), base(_base);
@@ -118,6 +121,7 @@ public:
     for(int i=0;i<cache.size();++i)
       cache[i] += k;
   }
+  
   vector<mpz_class> get_max(int start, int n, int m, int step) {
     assert(start + n * m <= cache.size());
     vector<mpz_class> ret;
@@ -161,6 +165,23 @@ public:
   }
   
   vector<vector<mpz_class> > preprocess(
+    unsigned char* image, int n, int m, int shift, int base) {
+    // first normalize to -1 ~ 1
+    //    [0, 255] --> [0, 1]
+    //       x = (x / 255)
+    vector<vector<mpz_class> > dat;
+    dat.resize(n);
+    for(int i=0;i<n;++i) {
+      for(int j=0;j<m;++j) {
+        int x = (int) image[i * m + j];
+        mpz_class m_x((int)(((x / 255.0) * 2 - 1) * base) + shift);
+        dat[i].push_back(p_enc->encrypt(m_x));
+      }
+    }
+    return dat;
+  }
+  
+  vector<vector<mpz_class> > preprocess_plain(
     unsigned char* image, int n, int m, int base) {
     // first normalize to -1 ~ 1
     //    [0, 255] --> [0, 1]
@@ -171,7 +192,7 @@ public:
       for(int j=0;j<m;++j) {
         int x = (int) image[i * m + j];
         mpz_class m_x((int)((x / 255.0) * base));
-        dat[i].push_back(p_enc->encrypt(m_x));
+        dat[i].push_back(m_x);
       }
     }
     return dat;

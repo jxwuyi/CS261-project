@@ -54,6 +54,68 @@ void DL_Server::compute_dot_product(
   }
 }
 
+int DL_Server::classify_plain(vector<vector<mpz_class> >dat) {
+  Storage<mpz_class> curr, next;
+  curr.init(1, dat.size(), dat[0].size());
+  for(int i=0;i<dat.size();++i)
+    for(int j=0;j<dat[i].size();++j)
+      curr.at(0,i,j) = dat[i][j];
+  
+  mpz_class m_base(base);
+  for(auto&layer: model) {
+    // conv layer
+    next.init(layer.k_out, curr.n - layer.n + 1, curr.m - layer.m + 1);
+    
+    for(int ch = 0; ch < layer.k_out; ++ ch) {
+      mpz_class m_bias = layer.bias[ch];
+      Storage<int> filter = layer.at(ch);
+        for(int x = 0; x < next.n; x ++)
+          for(int y = 0; y < next.m; ++ y) {
+              mpz_class val(0);
+              for(int k=0;k<filter.k;++k) {
+                for(int dx=0; dx<filter.n; dx++)
+                  for(int dy=0; dy<filter.m; dy++)
+                    val += filter.at(k,dx,dy) * curr.at(k.x+dx,y+dy);
+              val /= base;
+              val += m_bias;
+              next.at(ch,x,y) = val;
+          }
+    }
+    // non-linear layer
+    mpz_class zero(0);
+    if(layer.type < 0) {
+      int pos = 0;
+      for(int i=1;i<next.size();++i) {
+        if(cmp(next.at(pos), next.at(i)) < 0)
+          pos = i;
+      }
+      return pos;
+    } else 
+    if(layer.type == 0) {
+      for(int i=0;i<next.size();++i){
+        if(cmp(next.at(i), zero) < 0)
+          next.at(i) = zero;
+      }
+      curr = next;
+    } else {
+      int step = layer.type;
+      curr.init(next.k, (next.n + step - 1) / step, (next.m + step - 1) / step);
+      for(int k=0;k<next.k;++k) {
+        for(int i=0,r=0;i<next.n;i+=step,++r)
+          for(int j=0,c=0;j<next.m;j+=step,++c) {
+            mpz_class val;
+            for(int dx=0;dx<step&&i+dx<next.n;++dx)
+              for(int dy=0;dy<step&&j+dy<next.m;++dy)
+                if((dx+dy==0) ||
+                    cmp(val, next.at(k,i+dx,j+dy))<0)
+                      val = next.at(k,i+dx,j+dy);
+            curr.at(k, r, c) = val;
+          }
+      }
+    }
+  }
+}
+
 int DL_Server::classify(vector<vector<mpz_class> > dat) {
   /*
     Assume: 
@@ -88,6 +150,7 @@ int DL_Server::classify(vector<vector<mpz_class> > dat) {
     vector<mpz_class> param;
     vector<mpz_class> enc_param;
     vector<int> pos_x, pos_y;
+    mpz_class m_shift(shift);
     int len = layer.n*layer.m*layer.k_in;
     clear_temp_params(len, ndata, pos_x, pos_y, idx);
     
@@ -98,8 +161,9 @@ int DL_Server::classify(vector<vector<mpz_class> > dat) {
       param.resize(len);
       mpz_class sum_param(0);
       for(int i=0;i<len;++i) {
-        param[i] = filter.at(i) + shift;
+        param[i] = filter.at(i);
         sum_param += param[i];
+        param[i] += m_shift;
       }
       for(int i=0;i<len;++i) 
         enc_param[i] = p->encrypt(param[i]);
@@ -157,7 +221,6 @@ int DL_Server::classify(vector<vector<mpz_class> > dat) {
       return client->get_argmax();
     } else 
     if(layer.type == 0) { // ReLu layer
-      mpz_class m_shift(shift);
       client->minus(m_shift); // now client stores all the true values 
       curr.dat = client->get_ReLu(m_shift);
     } else { // Max Pooling Layer
