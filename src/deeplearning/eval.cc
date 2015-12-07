@@ -19,7 +19,7 @@
 using namespace std;
 //using namespace NTL;
 
-const int ReportStep = 1;
+const int ReportStep = 1000;
 
 
 DL_Client_Util* util;

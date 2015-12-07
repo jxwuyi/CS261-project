@@ -31,6 +31,12 @@ public:
     sz = k * n * m;
     dat.resize(sz);
   }
+  void reshape(int _k, int _n, int _m) {
+    assert(sz == _k * _n * _m);
+    k = _k; n = _n; m = _m;
+    bas1 = n * m;
+    bas2 = m;
+  }
   T& at(int x, int y, int z) {
     return dat[x * bas1 + y * bas2 + z];
   }

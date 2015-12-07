@@ -63,6 +63,11 @@ int DL_Server::classify_plain(vector<vector<mpz_class> >dat) {
   
   mpz_class m_base(base);
   for(auto&layer: model) {
+    // ensure size
+    if(layer.k_in != curr.k) {
+      curr.reshape(layer.k_in, 1, 1);
+    }
+    
     // conv layer
     next.init(layer.k_out, curr.n - layer.n + 1, curr.m - layer.m + 1);
     
@@ -135,6 +140,12 @@ int DL_Server::classify(vector<vector<mpz_class> > dat) {
   int ndata = simd.get_ndata();
   
   for(auto&layer: model) {
+    // ensure size
+    if(layer.k_in != curr.k) {
+      curr.reshape(layer.k_in, 1, 1);
+    }
+    
+    
     //////////////////////////////////////
     // conv layer
     //////////////////////////////////////
