@@ -19,7 +19,7 @@
 using namespace std;
 //using namespace NTL;
 
-const int ReportStep = 1000;
+const int ReportStep = 1;
 
 
 DL_Client_Util* util;
@@ -66,16 +66,16 @@ void run() {
     
     for(int i=1;i<=total;++i){
       int ans = mnist.label(i - 1);
-      /*
+      
       // Encrypted Data
       int rec = server->classify(
         util->preprocess(mnist.image(i - 1), n_row, n_col, shift, base));
-      */
       
+     /* 
       // Plain Data
       int rec = server->classify_plain(
         util->preprocess_plain(mnist.image(i - 1), n_row, n_col, base)); // not shift required
-      
+      */
       if (ans == rec) ++ correct;
       else ++ wrong;
       
