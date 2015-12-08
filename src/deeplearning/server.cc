@@ -73,7 +73,7 @@ int DL_Server::classify_plain(vector<vector<mpz_class> >dat) {
     
     for(int ch = 0; ch < layer.k_out; ++ ch) {
       mpz_class m_bias = layer.bias[ch];
-      Storage<int> filter = layer.at(ch);
+      Storage<int>&filter = layer.at(ch);
         for(int x = 0; x < next.n; x ++)
           for(int y = 0; y < next.m; ++ y) {
               mpz_class val(0);
@@ -172,7 +172,7 @@ int DL_Server::classify(vector<vector<mpz_class> > dat) {
     for(int ch = 0; ch < layer.k_out; ++ ch) {
       // set parameters
       mpz_class m_bias(layer.bias[ch]);
-      Storage<int> filter = layer.at(ch);
+      Storage<int>&filter = layer.at(ch);
       assert(filter.size() == len);
       
       param.resize(len);

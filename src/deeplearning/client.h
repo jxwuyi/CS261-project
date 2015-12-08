@@ -88,7 +88,7 @@ public:
       sumA[i] = p_dec->decrypt(sumA[i]) - nk;
       result[i] = p_dec->decrypt(result[i]);
     }
-    for(int i=0;i<cache.size();++i) {
+    for(int i=0;i<result.size();++i) {
       // Compute True Dot Product Result
       result[i] = result[i] - nk2 - k_sB - k *sumA[i];
       // Normalization
