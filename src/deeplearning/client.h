@@ -77,7 +77,7 @@ public:
     mpz_class bias, 
     int _n, int _k, int _base) {
     // K : shift;   n : vector dimension
-    // (A + K) * (B + K) = A * B + (sum{A} - n * K) * K + K * B + K * K
+    // (A + K) * (B + K) = A * B + (sum{A + K} - n * K) * K + K * B + K * K
     // result & sumA is encrypted
     assert(sumA.size() == result.size());
     mpz_class k(_k), n(_n), base(_base);
@@ -174,7 +174,7 @@ public:
     for(int i=0;i<n;++i) {
       for(int j=0;j<m;++j) {
         int x = (int) image[i * m + j];
-        mpz_class m_x((int)(((x / 255.0) * 2 - 1) * base) + shift);
+        mpz_class m_x((int)(((x / 255.0)) * base) + shift);
         dat[i].push_back(p_enc->encrypt(m_x));
       }
     }

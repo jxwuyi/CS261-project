@@ -133,7 +133,7 @@ int DL_Server::classify(vector<vector<mpz_class> > dat) {
   Storage<mpz_class> curr, next;
   curr.init(1, dat.size(), dat[0].size());
   for(int i=0;i<dat.size();++i) {
-    for(int j=0;j<dat[0].size();++j)
+    for(int j=0;j<dat[i].size();++j)
       curr.at(0,i,j) = dat[i][j];
   }
   
@@ -173,7 +173,10 @@ int DL_Server::classify(vector<vector<mpz_class> > dat) {
       // set parameters
       mpz_class m_bias(layer.bias[ch]);
       Storage<int> filter = layer.at(ch);
+      assert(filter.size() == len);
+      
       param.resize(len);
+      enc_param.resize(len);
       mpz_class sum_param(0);
       for(int i=0;i<len;++i) {
         param[i] = filter.at(i);
@@ -186,7 +189,7 @@ int DL_Server::classify(vector<vector<mpz_class> > dat) {
       // counters
       int cnt = 0;
       
-      for(int x=0;x<next.n; x++)
+      for(int x=0;x<next.n; x++) {
         for(int y=0;y<next.m; y++) {
           pos_x.push_back(x);
           pos_y.push_back(y);
@@ -210,18 +213,19 @@ int DL_Server::classify(vector<vector<mpz_class> > dat) {
             cnt = 0;
           }
         }
+      }
         
-        // Remaining
-        if(cnt > 0) {
-          compute_dot_product(
-              enc_param, sum_param,
-              m_bias,
-              idx,
-              next, ch,
-              pos_x, pos_y);
-          clear_temp_params(len, ndata, pos_x, pos_y, idx);
-          cnt = 0;
-        }
+      // Remaining
+      if(cnt > 0) {
+        compute_dot_product(
+            enc_param, sum_param,
+            m_bias,
+            idx,
+            next, ch,
+            pos_x, pos_y);
+        clear_temp_params(len, ndata, pos_x, pos_y, idx);
+        cnt = 0;
+      }
     }
     
     curr = next;
