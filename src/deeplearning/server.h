@@ -109,7 +109,7 @@ public:
     client = _cl;
     
     // default parameters
-    shift = 10000; // add <shift> to avoid negative values
+    shift = 1000; // add <shift> to avoid negative values
     base = 100; // remain 3 digits
   }
   

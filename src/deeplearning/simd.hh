@@ -6,12 +6,12 @@
 
 class SIMD {
   public:
-    SIMD(int nbits = 64, int ndata = 16) :
+    SIMD(int nbits = 32, int ndata = 32) :
             nbits_(nbits), ndata_(ndata) {
         // For now, we only support 64 bits packing 16 data, leading
         // to 1024 bit data.
-        assert(nbits == 64);
-        assert(ndata == 16);
+        assert(nbits == 32);
+        assert(ndata == 32);
 
         mpz_t m1;
         mpz_init_set_ui(m1, 2);
