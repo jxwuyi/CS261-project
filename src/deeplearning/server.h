@@ -145,7 +145,7 @@ private:
   }
   
   void compute_dot_product(
-      vector<mpz_class>& enc_param,
+      vector<long>& params,
       mpz_class& sum_param,
       mpz_class& bias,
       vector<vector<int> >&idx, 

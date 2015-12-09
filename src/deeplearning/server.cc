@@ -19,7 +19,7 @@ void DL_Server::load_model(const char *filename) {
 }
 
 void DL_Server::compute_dot_product(
-  vector<mpz_class>& enc_param,
+  vector<long>& params,
   mpz_class& sum_param,
   mpz_class& bias,
   vector<vector<int> >&idx, 
@@ -34,7 +34,7 @@ void DL_Server::compute_dot_product(
   vector<mpz_class> packed_values 
       = client->pack_all_from_index(simd, idx);
   // compute dot product
-  mpz_class result = p->dot_product(packed_values, enc_param);
+  mpz_class result = p->dot_product(packed_values, params);
   // unpack results
   vector<mpz_class> unpacked_result = client->get_unpack(simd, result);
   
@@ -162,8 +162,7 @@ int DL_Server::classify(vector<vector<mpz_class> > dat) {
     
     client->set_cache(curr.dat);
     vector<vector<int> > idx;
-    vector<mpz_class> param;
-    vector<mpz_class> enc_param;
+    vector<long> params;
     vector<int> pos_x, pos_y;
     mpz_class m_shift(shift);
     int len = layer.n*layer.m*layer.k_in;
@@ -175,16 +174,12 @@ int DL_Server::classify(vector<vector<mpz_class> > dat) {
       Storage<int>&filter = layer.at(ch);
       assert(filter.size() == len);
       
-      param.resize(len);
-      enc_param.resize(len);
+      params.resize(len);
       mpz_class sum_param(0);
       for(int i=0;i<len;++i) {
-        param[i] = filter.at(i);
-        sum_param += param[i];
-        param[i] += m_shift;
+        params[i] = filter.at(i) + shift;
+        sum_param += filter.at(i);
       }
-      for(int i=0;i<len;++i) 
-        enc_param[i] = p->encrypt(param[i]);
       
       // counters
       int cnt = 0;
@@ -204,7 +199,7 @@ int DL_Server::classify(vector<vector<mpz_class> > dat) {
           // assert(ptr == len)
           if(++ cnt == ndata) {
             compute_dot_product(
-              enc_param, sum_param, 
+              params, sum_param, 
               m_bias,
               idx,
               next, ch,
@@ -218,7 +213,7 @@ int DL_Server::classify(vector<vector<mpz_class> > dat) {
       // Remaining
       if(cnt > 0) {
         compute_dot_product(
-            enc_param, sum_param,
+            params, sum_param,
             m_bias,
             idx,
             next, ch,
